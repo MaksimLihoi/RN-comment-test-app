@@ -6,7 +6,7 @@ const db = SQLite.openDatabase(
     console.log('Database opened');
   },
   error => {
-    console.log('Error: ' + error);
+    console.error('Error: ' + error);
   },
 );
 export const initDB = () => {

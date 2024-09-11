@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
-import {Alert, Button, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Alert, Button, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {RouteNames} from '../navigators/AppNavigator.tsx';
 import db from '../database/database.js';
+import {CustomInput} from '../components';
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
@@ -21,12 +22,12 @@ const RegisterScreen = () => {
         [email, username],
         (_, results) => {
           if (results.rowsAffected > 0) {
-            console.log('Пользователь успешно зарегистрирован');
+            Alert.alert('Пользователь успешно зарегистрирован');
             navigation.navigate(RouteNames.HomeScreen);
           }
         },
         error => {
-          console.log('Ошибка регистрации: ', error.message);
+          Alert.alert('Ошибка регистрации: ', error.message);
         },
       );
     });
@@ -35,17 +36,17 @@ const RegisterScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Регистрация</Text>
-      <TextInput
-        style={styles.input}
+      <CustomInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        type="email"
       />
-      <TextInput
-        style={styles.input}
+      <CustomInput
         placeholder="User Name"
         value={username}
         onChangeText={setUsername}
+        type="text"
       />
       <Button title="Зарегистрироваться" onPress={handleRegister} />
     </View>

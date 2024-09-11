@@ -1,13 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Button,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {Button, ScrollView, StyleSheet, View} from 'react-native';
 import db from '../database/database.js';
+import {Comment, CustomInput} from '../components';
 
 const HomeScreen = () => {
   const [comments, setComments] = useState([]);
@@ -52,31 +46,32 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {comments.map(comment => (
-          <View key={comment.id} style={styles.commentContainer}>
-            <Text style={styles.username}>{comment.username}</Text>
-            <Text style={styles.commentText}>{comment.comment}</Text>
-          </View>
+          <Comment
+            key={comment.id}
+            userName={comment.username}
+            comment={comment.comment}
+          />
         ))}
       </ScrollView>
-      <TextInput
-        style={styles.input}
+      <CustomInput
         placeholder="Ваш комментарий"
         value={newComment}
         onChangeText={setNewComment}
       />
       <Button title="Добавить комментарий" onPress={handleAddComment} />
       <View style={styles.paginationButtons}>
-        <Button title="Следующая страница" onPress={() => setPage(page + 1)} />
-        {page > 1 && (
-          <Button
-            title="Предыдущая страница"
-            onPress={() => setPage(page - 1)}
-          />
-        )}
+        <Button
+          title="Предыдущая"
+          disabled={page <= 1}
+          onPress={() => setPage(page - 1)}
+        />
+
+        <Button title="Следующая" onPress={() => setPage(page + 1)} />
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -85,36 +80,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     marginBottom: 16,
-  },
-  commentContainer: {
-    backgroundColor: '#fff',
-    padding: 12,
-    marginBottom: 10,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  username: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  commentText: {
-    fontSize: 14,
-    color: '#555',
-  },
-  input: {
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingLeft: 10,
-    marginBottom: 16,
-    backgroundColor: '#fff',
   },
   paginationButtons: {
     flexDirection: 'row',
