@@ -1,57 +1,34 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button, ScrollView, StyleSheet, View} from 'react-native';
-import db from '../database/database.js';
 import {Comment, CustomInput} from '../components';
+import {useDatabase} from '../hooks';
 
 const HomeScreen = () => {
-  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-  const [page, setPage] = useState(1);
 
-  const fetchComments = () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `SELECT Comments.*, Users.username FROM Comments
-                   JOIN Users ON Comments.user_id = Users.id
-                   WHERE parent_id IS NULL
-                   ORDER BY created_at DESC
-                   LIMIT 25 OFFSET ${(page - 1) * 25}`,
-        [],
-        (_, results) => {
-          const rows = results.rows.raw();
-          setComments(rows);
-        },
-      );
-    });
-  };
+  const {fetchMoreComments, comments, addComment} = useDatabase();
 
   const handleAddComment = () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'INSERT INTO Comments (user_id, comment) VALUES (?, ?)',
-        [1, newComment],
-        () => {
-          fetchComments();
-          setNewComment('');
-        },
-      );
-    });
+    // TODO:: Mock user id change when login with 'auth' will be ready
+    addComment(1, newComment);
+    setNewComment('');
   };
-
-  useEffect(() => {
-    fetchComments();
-  }, [page]);
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {comments.map(comment => (
-          <Comment
-            key={comment.id}
-            userName={comment.username}
-            comment={comment.comment}
-          />
-        ))}
+        {comments.map(comment => {
+          if (comment.parent_id === null) {
+            return (
+              <Comment
+                key={comment.id}
+                id={comment.id}
+                userName={comment.username}
+                text={comment.comment}
+              />
+            );
+          }
+        })}
       </ScrollView>
       <CustomInput
         placeholder="Ваш комментарий"
@@ -59,15 +36,8 @@ const HomeScreen = () => {
         onChangeText={setNewComment}
       />
       <Button title="Добавить комментарий" onPress={handleAddComment} />
-      <View style={styles.paginationButtons}>
-        <Button
-          title="Предыдущая"
-          disabled={page <= 1}
-          onPress={() => setPage(page - 1)}
-        />
 
-        <Button title="Следующая" onPress={() => setPage(page + 1)} />
-      </View>
+      <Button title="Загрузить больше" onPress={fetchMoreComments} />
     </View>
   );
 };

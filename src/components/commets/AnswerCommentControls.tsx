@@ -6,12 +6,14 @@ interface AnswerCommentControlsProps {
   value: string;
   onChangeText: (value: string) => void;
   onDeclineButtonPress: () => void;
+  onAddCommentPress: () => void;
 }
 
 const AnswerCommentControls: FC<AnswerCommentControlsProps> = ({
   value,
   onDeclineButtonPress,
   onChangeText,
+  onAddCommentPress,
 }) => {
   return (
     <View>
@@ -26,7 +28,7 @@ const AnswerCommentControls: FC<AnswerCommentControlsProps> = ({
           color={'red'}
           onPress={onDeclineButtonPress}
         />
-        <Button title={'Отправить'} />
+        <Button title={'Отправить'} onPress={onAddCommentPress} />
       </View>
     </View>
   );
