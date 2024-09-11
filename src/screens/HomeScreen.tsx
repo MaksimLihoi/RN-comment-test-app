@@ -45,7 +45,11 @@ const HomeScreen: FC<HomeScreenProps> = ({route}) => {
         onChangeText={setNewComment}
       />
       <View style={styles.addCommentsButtonContainer}>
-        <Button title="Добавить комментарий" onPress={handleAddComment} />
+        <Button
+          disabled={!newComment}
+          title="Добавить комментарий"
+          onPress={handleAddComment}
+        />
       </View>
 
       <Button title="Загрузить больше" onPress={fetchMoreComments} />

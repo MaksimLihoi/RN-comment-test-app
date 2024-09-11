@@ -50,7 +50,14 @@ const MainComment: FC<MainComment> = memo(({userName, text, id, userId}) => {
           style={styles.buttonAndroid}
           onPress={() => setIsAnswerActive(true)}
           disabled={isAnswerActive}>
-          <Text>Ответить</Text>
+          <Text
+            style={
+              isAnswerActive
+                ? styles.disabledButtonTextColor
+                : styles.activeButtonTextColor
+            }>
+            Ответить
+          </Text>
         </TouchableOpacity>
       )}
 
@@ -101,6 +108,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 16,
+  },
+  activeButtonTextColor: {
+    color: 'blue',
+  },
+  disabledButtonTextColor: {
+    color: 'grey',
   },
 });
 
