@@ -1,1 +1,2 @@
-export {default as useDatabase} from './useDatabase.ts';
+export {default as useComments} from './useComments.ts';
+export {default as useAuth} from './useAuth.ts';

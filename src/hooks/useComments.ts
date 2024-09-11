@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import db from '../database/database';
 import {Comment} from '../types/comentTypes.ts';
 
-interface UseDatabaseReturn {
+interface CommentHook {
   comments: Comment[];
   addComment: (
     userId: number,
@@ -13,7 +13,7 @@ interface UseDatabaseReturn {
   fetchReplies: (parentId: number) => Promise<Comment[]>;
 }
 
-const useDatabase = (): UseDatabaseReturn => {
+const useComments = (): CommentHook => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [page, setPage] = useState(1);
 
@@ -92,4 +92,4 @@ const useDatabase = (): UseDatabaseReturn => {
   return {comments, addComment, fetchMoreComments, fetchReplies};
 };
 
-export default useDatabase;
+export default useComments;

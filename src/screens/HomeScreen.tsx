@@ -1,16 +1,24 @@
-import React, {useState} from 'react';
+import React, {FC, useState} from 'react';
 import {Button, ScrollView, StyleSheet, View} from 'react-native';
 import {Comment, CustomInput} from '../components';
-import {useDatabase} from '../hooks';
+import {useComments} from '../hooks';
+import {RootStackParamList, RouteNames} from '../navigators/AppNavigator.tsx';
+import {RouteProp} from '@react-navigation/native';
 
-const HomeScreen = () => {
+type HomeScreenRouteProp = RouteProp<RootStackParamList, RouteNames.HomeScreen>;
+
+interface HomeScreenProps {
+  route: HomeScreenRouteProp;
+}
+
+const HomeScreen: FC<HomeScreenProps> = ({route}) => {
+  const {userId} = route.params;
   const [newComment, setNewComment] = useState('');
 
-  const {fetchMoreComments, comments, addComment} = useDatabase();
+  const {fetchMoreComments, comments, addComment} = useComments();
 
   const handleAddComment = () => {
-    // TODO:: Mock user id change when login with 'auth' will be ready
-    addComment(1, newComment);
+    addComment(userId, newComment);
     setNewComment('');
   };
 
@@ -25,6 +33,7 @@ const HomeScreen = () => {
                 id={comment.id}
                 userName={comment.username}
                 text={comment.comment}
+                userId={userId}
               />
             );
           }
@@ -35,7 +44,9 @@ const HomeScreen = () => {
         value={newComment}
         onChangeText={setNewComment}
       />
-      <Button title="Добавить комментарий" onPress={handleAddComment} />
+      <View style={styles.addCommentsButtonContainer}>
+        <Button title="Добавить комментарий" onPress={handleAddComment} />
+      </View>
 
       <Button title="Загрузить больше" onPress={fetchMoreComments} />
     </View>
@@ -55,6 +66,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
+  },
+  addCommentsButtonContainer: {
+    marginBottom: 10,
   },
 });
 export default HomeScreen;

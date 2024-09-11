@@ -1,24 +1,31 @@
 import React, {FC, memo, useEffect, useState} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
+import {
+  Button,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import AnswerCommentControls from './AnswerCommentControls.tsx';
-import {useDatabase} from '../../hooks';
+import {useComments} from '../../hooks';
 import {Comment} from '../../types/comentTypes.ts';
 
 export interface MainComment {
   userName: string;
   text: string;
   id: number;
+  userId: number;
 }
 
-const MainComment: FC<MainComment> = memo(({userName, text, id}) => {
+const MainComment: FC<MainComment> = memo(({userName, text, id, userId}) => {
   const [isAnswerActive, setIsAnswerActive] = useState<boolean>(false);
   const [reply, setReply] = useState<string>('');
   const [replies, setReplies] = useState<Comment[]>([]);
-  const {addComment, fetchReplies} = useDatabase();
+  const {addComment, fetchReplies} = useComments();
 
   const handleAddComment = () => {
-    // TODO:: Mock user id change when login with 'auth' will be ready
-    addComment(2, reply, id);
+    addComment(userId, reply, id);
     setReply('');
     setIsAnswerActive(false);
     fetchReplies(id).then(setReplies);
@@ -32,11 +39,21 @@ const MainComment: FC<MainComment> = memo(({userName, text, id}) => {
     <View style={styles.commentContainer}>
       <Text style={styles.userName}>{userName}</Text>
       <Text style={styles.commentText}>{text}</Text>
-      <Button
-        title={'Ответить'}
-        onPress={() => setIsAnswerActive(true)}
-        disabled={isAnswerActive}
-      />
+      {Platform.OS === 'ios' ? (
+        <Button
+          title={'Ответить'}
+          onPress={() => setIsAnswerActive(true)}
+          disabled={isAnswerActive}
+        />
+      ) : (
+        <TouchableOpacity
+          style={styles.buttonAndroid}
+          onPress={() => setIsAnswerActive(true)}
+          disabled={isAnswerActive}>
+          <Text>Ответить</Text>
+        </TouchableOpacity>
+      )}
+
       {isAnswerActive && (
         <AnswerCommentControls
           onDeclineButtonPress={() => setIsAnswerActive(false)}
@@ -47,9 +64,11 @@ const MainComment: FC<MainComment> = memo(({userName, text, id}) => {
       )}
       {replies.map(repliedComment => (
         <MainComment
+          key={repliedComment.id}
           userName={repliedComment.username}
           text={repliedComment.comment}
           id={repliedComment.id}
+          userId={userId}
         />
       ))}
     </View>
@@ -77,6 +96,11 @@ const styles = StyleSheet.create({
   commentText: {
     fontSize: 14,
     color: '#555',
+  },
+  buttonAndroid: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 16,
   },
 });
 

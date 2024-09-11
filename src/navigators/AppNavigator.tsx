@@ -5,13 +5,13 @@ import {HomeScreen, RegisterScreen} from '../screens';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 export enum RouteNames {
-  RegistrationScreen = 'RegistrationScreen',
+  AuthScreen = 'RegistrationScreen',
   HomeScreen = 'HomeScreen',
 }
 
 export type RootStackParamList = {
-  [RouteNames.RegistrationScreen]: undefined;
-  [RouteNames.HomeScreen]: undefined;
+  [RouteNames.AuthScreen]: undefined;
+  [RouteNames.HomeScreen]: {userId: number};
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -20,9 +20,9 @@ const AppNavigator = () => {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={RouteNames.RegistrationScreen}>
+        <Stack.Navigator initialRouteName={RouteNames.AuthScreen}>
           <Stack.Screen
-            name={RouteNames.RegistrationScreen}
+            name={RouteNames.AuthScreen}
             component={RegisterScreen}
           />
           <Stack.Screen name={RouteNames.HomeScreen} component={HomeScreen} />
