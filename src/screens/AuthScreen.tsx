@@ -49,6 +49,7 @@ const AuthScreen = () => {
           placeholder="User Name"
           value={username}
           onChangeText={setUsername}
+          type={'username'}
         />
       )}
       <View style={styles.registerButtonContainer}>

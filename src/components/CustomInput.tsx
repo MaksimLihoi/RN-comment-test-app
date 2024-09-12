@@ -5,7 +5,7 @@ interface CustomInputProps {
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
-  type?: 'text' | 'email';
+  type?: 'text' | 'email' | 'username';
 }
 
 const CustomInput: FC<CustomInputProps> = ({
@@ -14,36 +14,44 @@ const CustomInput: FC<CustomInputProps> = ({
   onChangeText,
   type = 'text',
 }) => {
-  const [isValid, setIsValid] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-    return emailRegex.test(email);
+  const validate = (text: string) => {
+    if (type === 'email') {
+      const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+      if (!emailRegex.test(text)) {
+        setError('Invalid email address');
+      } else {
+        setError(null);
+      }
+    }
+
+    if (type === 'username') {
+      const usernameRegex = /^[a-zA-Z0-9]+$/;
+      if (!usernameRegex.test(text)) {
+        setError('Username can only contain letters and numbers');
+      } else {
+        setError(null);
+      }
+    }
   };
 
   const handleChangeText = (text: string) => {
-    if (type === 'email') {
-      setIsValid(validateEmail(text));
-    }
+    validate(text);
     onChangeText(text);
   };
 
   return (
     <View style={styles.container}>
       <TextInput
-        style={[
-          styles.input,
-          !isValid && type === 'email' ? styles.invalidInput : null,
-        ]}
+        style={[styles.input, error ? styles.invalidInput : null]}
         placeholder={placeholder}
         value={value}
         onChangeText={handleChangeText}
         keyboardType={type === 'email' ? 'email-address' : 'default'}
         autoCapitalize="none"
       />
-      {!isValid && type === 'email' && (
-        <Text style={styles.errorText}>Неверный email</Text>
-      )}
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
 };
