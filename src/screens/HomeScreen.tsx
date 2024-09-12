@@ -1,5 +1,5 @@
 import React, {FC, useState} from 'react';
-import {Button, ScrollView, StyleSheet, View} from 'react-native';
+import {Button, FlatList, StyleSheet, View} from 'react-native';
 import {Comment, CustomInput} from '../components';
 import {useComments} from '../hooks';
 import {RootStackParamList, RouteNames} from '../navigators/AppNavigator.tsx';
@@ -24,21 +24,21 @@ const HomeScreen: FC<HomeScreenProps> = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {comments.map(comment => {
-          if (comment.parent_id === null) {
-            return (
-              <Comment
-                key={comment.id}
-                id={comment.id}
-                userName={comment.username}
-                text={comment.comment}
-                userId={userId}
-              />
-            );
-          }
-        })}
-      </ScrollView>
+      <FlatList
+        data={comments.filter(comment => comment.parent_id === null)} // Фильтруем только корневые комментарии
+        keyExtractor={comment => comment.id.toString()}
+        renderItem={({item}) => (
+          <Comment
+            key={item.id}
+            id={item.id}
+            userName={item.username}
+            text={item.comment}
+            userId={userId}
+            timeCreated={item.created_at}
+          />
+        )}
+        contentContainerStyle={styles.listContent}
+      />
       <CustomInput
         placeholder="Ваш комментарий"
         value={newComment}
@@ -51,8 +51,6 @@ const HomeScreen: FC<HomeScreenProps> = ({route}) => {
           onPress={handleAddComment}
         />
       </View>
-
-      <Button title="Загрузить больше" onPress={fetchMoreComments} />
     </View>
   );
 };
@@ -63,13 +61,8 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f5f5f5',
   },
-  scrollView: {
-    marginBottom: 16,
-  },
-  paginationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
+  listContent: {
+    paddingBottom: 16,
   },
   addCommentsButtonContainer: {
     marginBottom: 10,
