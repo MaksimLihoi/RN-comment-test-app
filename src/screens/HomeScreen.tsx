@@ -15,7 +15,7 @@ const HomeScreen: FC<HomeScreenProps> = ({route}) => {
   const {userId} = route.params;
   const [newComment, setNewComment] = useState('');
 
-  const {fetchMoreComments, comments, addComment} = useComments();
+  const {comments, addComment} = useComments();
 
   const handleAddComment = () => {
     addComment(userId, newComment);
